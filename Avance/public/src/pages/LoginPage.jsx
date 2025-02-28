@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import api from '../services/api';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +23,7 @@ function LoginPage() {
       localStorage.setItem('userId', response.userId);
       localStorage.setItem('userRole', response.role);
 
-      window.location.href = '/home.html';
+      navigate('/home');
     } catch (error) {
       alert(error.message || 'Credenciales incorrectas. Inténtalo de nuevo.');
     }
@@ -72,7 +74,7 @@ function LoginPage() {
       </div>
       <Button type="submit" text="Login"/>
       <p> </p>
-      <Button type="button" text="Registrarse" onClick={() => window.location.href='/register.html'}/>
+      <Button type="button" text="Registrarse" onClick={() => navigate('/register')}/>
       <div className="credits">
         <a href="" target="_blank">
           © todos los derechos menos 2 reservados

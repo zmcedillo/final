@@ -8,6 +8,7 @@ const router = express.Router();
 // Obtener todos los productos
 router.get('/', async (req, res) => {
   try {
+    console.log("Petición a /api/products")
     const products = await Product.find();
     res.json(products);
   } catch (err) {

@@ -8,22 +8,28 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000; // Se cambia el puerto a 3000 para evitar confusiones
 
 connectDB();
 
 app.use(cors());
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
-  });
+// Sirve los archivos estáticos desde la carpeta 'public' que está un nivel arriba
+app.use(express.static(path.join(__dirname, '../public'))); // Modificado
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/users', authRoutes);
+
+// Sirve los archivos estáticos desde la carpeta 'public' que está un nivel arriba
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Ruta para todas las peticiones, para que react pueda manejar las rutas
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+  });
+
 
 app.use(errorHandler);
 

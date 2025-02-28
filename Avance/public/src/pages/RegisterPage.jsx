@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import api from '../services/api';
 
 function RegisterPage() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
@@ -21,7 +23,7 @@ function RegisterPage() {
       localStorage.setItem('token', response.token);
       localStorage.setItem('userId', response.userId);
       alert('Usuario registrado exitosamente');
-      window.location.href = '/login.html';
+      navigate('/login');
     } catch (error) {
       alert(error.message || 'Error al registrar el usuario. Inténtalo de nuevo.');
     }
