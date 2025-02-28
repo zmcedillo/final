@@ -3,10 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import api from '../services/api';
 
+
+
+const BACKEND_URL = 'http://localhost:3000';
+
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const handleGoogleLogin = () => {
+    window.location.href = `${BACKEND_URL}/api/auth/google`;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +41,9 @@ function LoginPage() {
       <div className="control">
         <h1>Login</h1>
       </div>
+      <button onClick={handleGoogleLogin} className="google-login-button">
+        Registrate con Google
+      </button>
       <div className="control block-cube block-input">
         <input
           type="text"

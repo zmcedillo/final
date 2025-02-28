@@ -1,10 +1,94 @@
 const express = require('express');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const session = require('express-session');
 const { login } = require('../controllers/authController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const User = require('../models/User');
 const Product = require('../models/Product');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
+
+router.use(session({
+  secret: "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",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+router.use(passport.initialize());
+router.use(passport.session());
+
+// Passport Configuration
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID, // Use environment variables
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Use environment variables
+  callbackURL: "/api/auth/google/callback",
+  scope: ['profile', 'email']
+},
+async (accessToken, refreshToken, profile, done) => {
+  try {
+    // Check if the user exists in your database
+    let user = await User.findOne({ googleId: profile.id });
+    console.log("despues de user findone");
+
+    if (!user) {
+      // Create a new user
+      user = new User({
+        googleId: profile.id,
+        username: profile.displayName,
+        email: profile.emails[0].value,
+        role: "user",
+      });
+    console.log("despues de if user");
+    await user.save();
+    }
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    console.log("token: ", token);
+    user.token = token;
+    await user.save();
+    return done(null, user);
+  } catch (err) {
+    return done(err);
+  }
+}
+));
+
+passport.serializeUser((user, done) => {
+done(null, user.id); // Use user.id, not user._id
+});
+
+passport.deserializeUser(async (id, done) => {
+try {
+  const user = await User.findById(id);
+  done(null, user);
+} catch (err) {
+  done(err, null);
+}
+});
+
+// Google Auth Routes
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback',
+
+passport.authenticate('google', { failureRedirect: '/login' }),
+(req, res) => {
+  // Successful authentication, generate a JWT and send it to the frontend
+  console.log('User from Google callback:', req.user);
+  res.redirect(`http://localhost:5173/home?token=${req.user.token}&userId=${req.user._id}&role=${req.user.role}`);
+}
+);
+
+
+
+
+
+
+
+
 
 router.post('/login', login);
 

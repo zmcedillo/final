@@ -9,13 +9,27 @@ function HomePage() {
   const [userRole, setUserRole] = useState(null);
 
   const token = localStorage.getItem('token');
-
   const userId = localStorage.getItem('userId');
 const BACKEND_URL = 'http://localhost:3000';
 
   useEffect(() => {
     if (!token || !userId) {
-      navigate('/login'); // Redirigir al login si no hay token o userId
+        const urlParams = new URLSearchParams(window.location.search);
+        const tokenFromUrl = urlParams.get('token');
+        const userIdFromUrl = urlParams.get('userId');
+        const roleFromUrl = urlParams.get('role');
+        if (tokenFromUrl && userIdFromUrl){
+            localStorage.setItem('token', tokenFromUrl);
+            localStorage.setItem('userId', userIdFromUrl);
+            if (roleFromUrl) {
+              localStorage.setItem('role', roleFromUrl);
+              setUserRole(roleFromUrl);
+            }
+            loadProducts();
+            
+        } else {
+          navigate('/login');
+        }
       return;
     }
 
@@ -151,6 +165,11 @@ const BACKEND_URL = 'http://localhost:3000';
     }
   }
 
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/login'); // Redirige al login
+  };
+
   return (
     <div>
       {/* Banner con nombre y logo */}
@@ -161,6 +180,7 @@ const BACKEND_URL = 'http://localhost:3000';
           🛒
           <span className="cart-count" id="cart-count">{cart.length}</span>
         </button>
+        <button onClick={handleLogout} className="logout-button">Cerrar Sesión</button> {/* Logout button */}
       </header>
       <div className="cart-sidebar" id="cart-sidebar">
         <h2>Carrito de Compras</h2>

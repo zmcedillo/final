@@ -87,6 +87,7 @@ body {
   
   .modal-content {
     background-color: white;
+    color: black;
     padding: 20px;
     border-radius: 8px;
     width: 300px;
@@ -194,4 +195,19 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+  }
+
+  .logout-button {
+    background-color: #dc3545; /* Red color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 20px; /* Add space between cart and logout buttons */
+    font-size: 16px;
+  }
+  
+  .logout-button:hover {
+    background-color: #c82333; /* Darker red on hover */
   }

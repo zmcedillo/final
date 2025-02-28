@@ -152,3 +152,36 @@ h1 {
 .credits a:hover {
   opacity: 1;
 }
+
+.google-login-button {
+  background-color: #fff; /* White background */
+  color: #000000; /* Google blue for the text */
+  border: 1px solid #dadce0; /* Light gray border */
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  width: 100%; /* Take up full width of the container */
+  margin-bottom: 20px; /* Add some space below the button */
+}
+
+.google-login-button:hover {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2); /* Add a subtle shadow on hover */
+  background-color: #f8f9fa; /* Slightly gray background on hover */
+}
+
+.google-login-button::before {
+  content: "";
+  background-image: url("https://static.vecteezy.com/system/resources/previews/012/871/370/non_2x/google-logo-in-solid-style-letter-g-icon-of-google-free-png.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 30px;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
