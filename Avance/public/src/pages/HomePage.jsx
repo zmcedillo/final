@@ -7,6 +7,7 @@ function HomePage() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [userRole, setUserRole] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
@@ -41,7 +42,7 @@ const BACKEND_URL = 'http://localhost:3000';
   // Función para añadir un producto al carrito
   const addToCart = async (productId) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/users/cart`, {
+      const response = await fetch(`${BACKEND_URL}/api/users/cart/${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,11 +67,13 @@ const BACKEND_URL = 'http://localhost:3000';
   // Función para eliminar un producto del carrito
   const removeFromCart = async (productId) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/users/cart/${productId}`, {
+      const response = await fetch(`${BACKEND_URL}/api/users/cart/${userId}`, {
         method: 'DELETE',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({ productId }),
       });
 
       if (response.ok) {
@@ -86,6 +89,34 @@ const BACKEND_URL = 'http://localhost:3000';
     }
   };
 
+  // Funcion para modificar la cantidad del producto en el carrito
+  const modifyQuantity = async (productId, quantity) => {
+    try {
+      if (quantity < 0) {
+        return; // No hacer nada si la cantidad es negativa
+      }
+      const response = await fetch(`${BACKEND_URL}/api/users/cart/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ productId, quantity }),
+      });
+
+      if (response.ok) {
+        loadProducts();
+        loadCart();
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Error al modificar la cantidad");
+      }
+    } catch (err) {
+      console.error("Error al modificar la cantidad", err);
+      alert("Error de conexion. Intentalo de nuevo");
+    }
+  };
+
   // Cargar productos desde la base de datos
   const loadProducts = async () => {
     console.log("Petición a /api/products desde loadProducts");
@@ -97,7 +128,7 @@ const BACKEND_URL = 'http://localhost:3000';
   // Función para cargar el carrito
   const loadCart = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/users/cart`, {
+      const response = await fetch(`${BACKEND_URL}/api/users/cart/${userId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json",
           Authorization: `Bearer ${token}`, },
@@ -170,6 +201,20 @@ const BACKEND_URL = 'http://localhost:3000';
     navigate('/login'); // Redirige al login
   };
 
+  //Funcion que calcula el total del precio
+  const calculateTotalPrice = () => {
+    let total = 0;
+    cart.forEach((item) => {
+      total += item.price * item.quantity;
+    });
+    setTotalPrice(total);
+  };
+
+  //Actualizar el total del precio al cargar el carrito
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [cart]);
+
   return (
     <div>
       {/* Banner con nombre y logo */}
@@ -187,11 +232,18 @@ const BACKEND_URL = 'http://localhost:3000';
         <div id="cart-items">
           {cart.map((item) => (
             <div className="cart-item" key={item.productId._id}>
-              <img src={item.productId.url} alt={item.productId.name} />
-              <span>{item.productId.name} (x{item.quantity})</span>
-              <button onClick={() => removeFromCart(item.productId._id)}>Eliminar</button>
+              <img src={item.url} alt={item.productId.name} />
+              <span>{item.productId.name}</span>
+              <span>Precio: {item.productId.price}</span>
+              <button onClick={() => modifyQuantity(item.productId, item.quantity + 1)}>+</button>
+              <span>(x{item.quantity})</span>
+              <button onClick={() => modifyQuantity(item.productId, item.quantity - 1)}>-</button>
+              <button onClick={() => removeFromCart(item.productId)}>Eliminar</button>
             </div>
           ))}
+        </div>
+        <div id='total'>
+          Total: ${totalPrice}
         </div>
         <button id="close-cart" onClick={() => document.getElementById('cart-sidebar').classList.remove('open')}>Cerrar</button>
       </div>

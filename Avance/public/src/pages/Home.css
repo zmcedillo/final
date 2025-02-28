@@ -185,6 +185,11 @@ body {
     border-radius: 5px;
     cursor: pointer;
   }
+
+  .cart-item button:last-child { /* Selector que apunta al ultimo boton del item*/
+    margin-left: 10px; /* Agrega un margen izquierdo de 10px */
+    background-color: #ff4d4d; /* Cambia el color a rojo para distinguirlo */
+  }
   
   #close-cart {
     margin-top: 20px;
@@ -210,4 +215,10 @@ body {
   
   .logout-button:hover {
     background-color: #c82333; /* Darker red on hover */
+  }
+
+  #total {
+    color: black; /* Cambiar el color del texto a negro */
+    margin-top: 10px; /*Añadir margen superior para separar */
+    font-weight: bold; /* Opcional: hacer el texto en negrita */
   }

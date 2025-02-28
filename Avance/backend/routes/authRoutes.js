@@ -118,17 +118,21 @@ router.post("/register", async (req, res) => {
 
 
 // Añade un producto al carrito del usuario actual
-router.post('/cart', authMiddleware, async (req, res) => {
+router.post('/cart/:userId', authMiddleware, async (req, res) => {
   const { productId } = req.body;
+  const userId = req.params.userId;
   try {
     console.log("Petición a /api/users/cart");
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
     const product = await Product.findById(productId);
     if (!product || product.quantity < 1) {
       return res.status(404).json({ message: 'Producto no disponible' });
     }
 
-    const user = await User.findById(req.userId);
-    const productIndex = user.cart.findIndex(item => item.productId.toString() === productId);
+    const productIndex = user.cart.findIndex(item => item.productId.equals(productId));
 
     if (productIndex !== -1) {
       user.cart[productIndex].quantity += 1;
@@ -140,7 +144,7 @@ router.post('/cart', authMiddleware, async (req, res) => {
     await product.save();
 
     await user.save();
-    res.json(user.cart);
+    res.status(200).json(user.cart);
   } catch (err) {
     console.error('Error al añadir al carrito:', err);
     res.status(500).json({ message: 'Error al añadir al carrito' });
@@ -148,12 +152,16 @@ router.post('/cart', authMiddleware, async (req, res) => {
 });
 
 // Eliminar un producto del carrito del usuario actual
-router.delete('/cart/:productId', authMiddleware, async (req, res) => {
-  const { productId } = req.params;
+router.delete('/cart/:userId', authMiddleware, async (req, res) => {
+  const userId = req.params.userId;
+  const { productId } = req.body;
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
     const productIndex = user.cart.findIndex(item => item.productId.toString() === productId);
-
+    
     if (productIndex === -1) {
       return res.status(404).json({ message: 'Producto no encontrado en el carrito' });
     }
@@ -175,14 +183,80 @@ router.delete('/cart/:productId', authMiddleware, async (req, res) => {
 });
 
 // Obtener el carrito de un usuario con detalles de los productos
-router.get('/cart', authMiddleware, async (req, res) => {
+router.get('/cart/:userId', authMiddleware, async (req, res) => {
   try {
+    const userId = req.params.userId;
     console.log("Petición a /api/users/cart");
-    const user = await User.findById(req.userId).populate('cart.productId');
-    res.json(user.cart);
+    const user = await User.findById(userId).populate('cart.productId');
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    const populatedCart = await Promise.all(
+      user.cart.map(async (cartItem) => {
+        const product = await Product.findById(cartItem.productId);
+
+        if (!product) {
+          return null; //Producto no encontrado, devolver null
+        }
+
+        return {
+          productId: product._id,
+          name: product.name,
+          price: product.price,
+          description: product.description,
+          url: product.url,
+          quantity: cartItem.quantity,
+        };
+      })
+    );
+    const filteredCart = populatedCart.filter((item) => item !== null);
+    res.status(200).json(filteredCart);
   } catch (err) {
     console.error('Error al obtener el carrito:', err);
     res.status(500).json({ message: 'Error al obtener el carrito' });
+  }
+});
+
+router.put('/cart/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { productId, quantity } = req.body;
+
+    // Buscar al usuario
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    // Encontrar el producto en el carrito
+    const cartItem = user.cart.find(item => item.productId.equals(productId));
+    const product = await Product.findById(productId);
+    const quantityDifference = quantity - cartItem.quantity;
+    console.log("b",quantityDifference);
+    product.quantity -= quantityDifference;
+
+    if(product.quantity < 0){
+      return res.status(400).json({ message: "No hay suficiente stock" });
+    }
+
+    if(!cartItem){
+      return res.status(404).json({message: "Producto no encontrado en el carrito"});
+    }
+
+    // Actualizar la cantidad
+    cartItem.quantity = quantity;
+
+    // Si la cantidad es 0, eliminar el producto
+    if(quantity === 0){
+      user.cart = user.cart.filter(item => !item.productId.equals(productId));
+    }
+
+    // Guardar los cambios
+    await user.save();
+    await product.save();
+    res.status(200).json(user.cart);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al actualizar el producto del carrito' });
   }
 });
 
