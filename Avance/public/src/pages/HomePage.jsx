@@ -259,15 +259,6 @@ const BACKEND_URL = 'http://localhost:3000';
       alert('Error al verificar el estado del pago.');
     }
   };
-  
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get('session_id');
-  
-    if (sessionId) {
-      checkPaymentStatus(sessionId);
-    }
-  }, []);
 
   //Actualizar el total del precio al cargar el carrito
   useEffect(() => {

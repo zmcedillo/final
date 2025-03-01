@@ -312,6 +312,7 @@ router.get('/check-payment-status/:sessionId', authMiddleware, async (req, res) 
 
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+    console.log('Sesión de pago:', session);
 
     if (session.payment_status === 'paid') {
       const userId = session.metadata.userId; // Obtener el userId de los metadatos
@@ -324,7 +325,9 @@ router.get('/check-payment-status/:sessionId', authMiddleware, async (req, res) 
       }
 
       // Vaciar el carrito del usuario
+      console.log("cart antes del supuesto vaciado: ", user.cart);
       user.cart = [];
+      console.log("cart despues del supuesto vaciado: ", user.cart);
       await user.save();
 
       res.json({ status: 'paid', message: 'Pago exitoso y carrito vaciado' });
