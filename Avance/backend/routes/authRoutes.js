@@ -8,6 +8,7 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const router = express.Router();
 
 router.use(session({
@@ -257,6 +258,82 @@ router.put('/cart/:userId', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al actualizar el producto del carrito' });
+  }
+});
+
+router.post('/create-checkout-session/:userId', authMiddleware, async (req, res) => {
+  const userId = req.params.userId;
+  const { cartItems } = req.body; // Recibe los productos del carrito
+
+  try {
+    // Buscar al usuario
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Verificar si el carrito está vacío
+    if (cartItems.length === 0) {
+      return res.status(400).json({ message: 'El carrito está vacío' });
+    }
+
+    const line_items = cartItems.map(item => ({
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: item.name,
+          description: item.description
+        },
+        unit_amount: item.price * 100, // Precio en centavos
+      },
+      quantity: item.quantity,
+    }));
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items,
+      mode: 'payment',
+      success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`, // Define la URL de éxito
+      cancel_url: `${process.env.FRONTEND_URL}/cancel`, // Define la URL de cancelación
+      metadata: {
+        userId: userId // Agrega el ID del usuario a los metadatos
+      }
+    });
+
+    res.json({ url: session.url }); // Retorna la URL de Stripe
+  } catch (error) {
+    console.error('Error al crear la sesión de pago:', error);
+    res.status(500).json({ message: 'Error al crear la sesión de pago' });
+  }
+});
+
+router.get('/check-payment-status/:sessionId', authMiddleware, async (req, res) => {
+  const { sessionId } = req.params;
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    if (session.payment_status === 'paid') {
+      const userId = session.metadata.userId; // Obtener el userId de los metadatos
+      console.log('Pago exitoso para el usuario:', userId);
+
+      // Buscar al usuario
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+
+      // Vaciar el carrito del usuario
+      user.cart = [];
+      await user.save();
+
+      res.json({ status: 'paid', message: 'Pago exitoso y carrito vaciado' });
+    } else {
+      res.json({ status: 'unpaid', message: 'Pago no completado' });
+    }
+  } catch (error) {
+    console.error('Error al verificar el estado del pago:', error);
+    res.status(500).json({ message: 'Error al verificar el estado del pago' });
   }
 });
 

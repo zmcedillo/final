@@ -222,3 +222,24 @@ body {
     margin-top: 10px; /*Añadir margen superior para separar */
     font-weight: bold; /* Opcional: hacer el texto en negrita */
   }
+
+  #pay-button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 5px;
+    background-color: rgb(75, 255, 129); /* Make the button background transparent */
+    color: rgb(0, 0, 0); /* Set text color to black */
+    border: 2px solid black; /* Add a black border */
+    border-radius: 10px; /* Rounded corners */
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically */
+  }
+    
+  .stripe-logo {
+      height: 30px; /* Adjust the size of the logo as needed */
+      width: 80px;
+      object-fit: cover;
+  }

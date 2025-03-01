@@ -210,6 +210,65 @@ const BACKEND_URL = 'http://localhost:3000';
     setTotalPrice(total);
   };
 
+  const handlePay = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/auth/create-checkout-session/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ cartItems: cart }), // Envía el carrito al backend
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al iniciar el pago');
+      }
+  
+      const { url } = await response.json(); // Obtiene la URL de Stripe
+      window.location.href = url; // Redirige a Stripe
+  
+    } catch (error) {
+      console.error('Error al iniciar el pago:', error);
+      alert(error.message);
+    }
+  };
+  
+  const checkPaymentStatus = async (sessionId) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/auth/check-payment-status/${sessionId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const data = await response.json();
+      if (data.status === 'paid') {
+        alert('Pago completado y carrito vaciado.');
+        loadCart();
+      } else {
+        console.log('Pago no completado:', data.message);
+        alert('Pago no completado');
+        loadCart();
+      }
+    } catch (error) {
+      console.error('Error al verificar el estado del pago:', error);
+      alert('Error al verificar el estado del pago.');
+    }
+  };
+  
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+  
+    if (sessionId) {
+      checkPaymentStatus(sessionId);
+    }
+  }, []);
+
   //Actualizar el total del precio al cargar el carrito
   useEffect(() => {
     calculateTotalPrice();
@@ -245,6 +304,9 @@ const BACKEND_URL = 'http://localhost:3000';
         <div id='total'>
           Total: ${totalPrice}
         </div>
+        <button id='pay-button' onClick={handlePay}>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/1200px-Stripe_Logo%2C_revised_2016.svg.png" alt="Pagar con Stripe" className="stripe-logo" />
+        </button>
         <button id="close-cart" onClick={() => document.getElementById('cart-sidebar').classList.remove('open')}>Cerrar</button>
       </div>
 
