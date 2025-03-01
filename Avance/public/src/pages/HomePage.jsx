@@ -269,7 +269,7 @@ const BACKEND_URL = 'https://final-backend-r0x7.onrender.com';
     <div>
       {/* Banner con nombre y logo */}
       <header className="banner">
-        <img src="/Logo.png" alt="Logo" className="logo" />
+        <img src="\public\Logo.png" alt="Logo" className="logo" />
         <h1>HardwareZone</h1>
         <button className="cart-icon" id="cart-icon" onClick={() => document.getElementById('cart-sidebar').classList.toggle('open')}>
           🛒
