@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = "http://localhost:3000/api/auth"; 
+const BASE_URL = "https://final-backend-r0x7.onrender.com/api/auth"; 
 
 const api = {
   login: async (username, password) => {

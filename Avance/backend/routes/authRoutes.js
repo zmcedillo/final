@@ -79,7 +79,7 @@ passport.authenticate('google', { failureRedirect: '/login' }),
 (req, res) => {
   // Successful authentication, generate a JWT and send it to the frontend
   console.log('User from Google callback:', req.user);
-  res.redirect(`http://localhost:5173/home?token=${req.user.token}&userId=${req.user._id}&role=${req.user.role}`);
+  res.redirect(`https://final-frontend-jahn.onrender.com/home?token=${req.user.token}&userId=${req.user._id}&role=${req.user.role}`);
 }
 );
 

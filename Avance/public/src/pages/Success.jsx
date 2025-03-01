@@ -5,7 +5,7 @@ import './Success.css';
 const Success = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const BACKEND_URL = 'http://localhost:3000/api/auth';
+  const BACKEND_URL = 'https://final-backend-r0x7.onrender.com/api/auth';
 
   const checkPaymentStatus = async (sessionId) => {
     try {

@@ -11,7 +11,7 @@ function HomePage() {
 
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
-const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = 'https://final-backend-r0x7.onrender.com';
 
   useEffect(() => {
     if (!token || !userId) {
