@@ -30,11 +30,11 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', authRoutes);
 
 // Sirve los archivos estáticos desde la carpeta 'public' que está un nivel arriba
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public/dist')));
 
 // Ruta para todas las peticiones, para que react pueda manejar las rutas
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+    res.sendFile(path.join(__dirname, '../public/dist', 'index.html'));
   });
 
 
