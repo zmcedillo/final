@@ -293,8 +293,8 @@ router.post('/create-checkout-session/:userId', authMiddleware, async (req, res)
       payment_method_types: ['card'],
       line_items,
       mode: 'payment',
-      success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`, // Define la URL de éxito
-      cancel_url: `${process.env.FRONTEND_URL}/cancel`, // Define la URL de cancelación
+      success_url: `https://final-frontend-jahn.onrender.com/success?session_id={CHECKOUT_SESSION_ID}`, // Define la URL de éxito
+      cancel_url: `https://final-frontend-jahn.onrender.com/cancel`, // Define la URL de cancelación
       metadata: {
         userId: userId // Agrega el ID del usuario a los metadatos
       }
