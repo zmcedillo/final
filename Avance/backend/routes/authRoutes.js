@@ -264,11 +264,11 @@ router.put('/cart/:userId', async (req, res) => {
 router.post('/create-checkout-session/:userId', authMiddleware, async (req, res) => {
   const userId = req.params.userId;
   const { cartItems } = req.body; // Recibe los productos del carrito
+  const user = await User.findById(userId);
   console.log("user cart = ", user.cart);
   console.log("cartItems = ", cartItems);
   try {
     // Buscar al usuario
-    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
