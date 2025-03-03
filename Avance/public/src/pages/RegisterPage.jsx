@@ -76,7 +76,7 @@ function RegisterPage() {
         <input
           type="text"
           id="role"
-          placeholder="role"
+          placeholder="role: user o admin"
           required
           value={role}
           onChange={(e) => setRole(e.target.value)}
