@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import Alma from './pages/Alma';
 import Cancel from './pages/Cancel';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -14,7 +15,9 @@ function App() {
               <Route path="/home" element={<HomePage />} />
               <Route path="/success" element={<Success/>} />
               <Route path="/cancel" element={<Cancel/>} />
+              <Route path="/alma" element={<Alma />} />
               <Route path="/" element={<Navigate to="/login" />} />
+
           </Routes>
       </BrowserRouter>
   );

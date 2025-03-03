@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Contrato from '../assets/Contrato.png';
+import './Alma.css';
 
 function Alma() {
     const navigate = useNavigate();
