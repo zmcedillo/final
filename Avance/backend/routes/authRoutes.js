@@ -264,7 +264,8 @@ router.put('/cart/:userId', async (req, res) => {
 router.post('/create-checkout-session/:userId', authMiddleware, async (req, res) => {
   const userId = req.params.userId;
   const { cartItems } = req.body; // Recibe los productos del carrito
-
+  console.log("user cart = ", user.cart);
+  console.log("cartItems = ", cartItems);
   try {
     // Buscar al usuario
     const user = await User.findById(userId);
@@ -273,6 +274,7 @@ router.post('/create-checkout-session/:userId', authMiddleware, async (req, res)
     }
 
     // Verificar si el carrito está vacío
+    
     if (cartItems.length === 0) {
       return res.status(400).json({ message: 'El carrito está vacío' });
     }
