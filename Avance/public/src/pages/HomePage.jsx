@@ -236,6 +236,10 @@ const BACKEND_URL = 'https://final-backend-r0x7.onrender.com';
     }
   };
 
+  const handleAlmaPay = () => {
+    navigate('/alma'); // Redirect to the Alma page
+  };
+
   //Actualizar el total del precio al cargar el carrito
   useEffect(() => {
     calculateTotalPrice();
@@ -274,6 +278,7 @@ const BACKEND_URL = 'https://final-backend-r0x7.onrender.com';
         <button id='pay-button' onClick={handlePay}>
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/1200px-Stripe_Logo%2C_revised_2016.svg.png" alt="Pagar con Stripe" className="stripe-logo" />
         </button>
+        <button id='alma-button' onClick={handleAlmaPay}>Paga con tu alma</button>
         <button id="close-cart" onClick={() => document.getElementById('cart-sidebar').classList.remove('open')}>Cerrar</button>
       </div>
 
