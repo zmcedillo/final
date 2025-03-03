@@ -235,31 +235,6 @@ const BACKEND_URL = 'https://final-backend-r0x7.onrender.com';
       alert(error.message);
     }
   };
-  
-  const checkPaymentStatus = async (sessionId) => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/auth/check-payment-status/${sessionId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      const data = await response.json();
-      if (data.status === 'paid') {
-        alert('Pago completado y carrito vaciado.');
-        loadCart();
-      } else {
-        console.log('Pago no completado:', data.message);
-        alert('Pago no completado');
-        loadCart();
-      }
-    } catch (error) {
-      console.error('Error al verificar el estado del pago:', error);
-      alert('Error al verificar el estado del pago.');
-    }
-  };
 
   //Actualizar el total del precio al cargar el carrito
   useEffect(() => {
