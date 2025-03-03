@@ -24,7 +24,7 @@ const Success = () => {
 
       const data = await response.json();
       if (data.status === 'paid') {
-        //alert('Pago completado y carrito vaciado.');
+        //alert('Pago completado y carrito vaciado.' );
       } else {
         console.log('Pago no completado:', data.message);
         alert('Pago no completado');
