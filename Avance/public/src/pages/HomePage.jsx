@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/Logo.png';
 import './Home.css';
-
 function HomePage() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
