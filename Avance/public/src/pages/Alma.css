@@ -37,8 +37,8 @@
   }
   
   .name-field {
-    top: 57%; /* Adjust position as needed */
-    left: 32%; /* Adjust position as needed */
+    top: 22%; /* Adjust position as needed */
+    left: 62%; /* Adjust position as needed */
   }
   
   .signature-field {
@@ -54,7 +54,7 @@
   
   .name-field input[type="text"],
   .signature-field input[type="text"]{
-    width: 100%;
+    width: 60%;
     padding: 8px;
     border: none;
     background-color: white; /* Remove background */
