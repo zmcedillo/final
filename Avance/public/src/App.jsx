@@ -14,7 +14,6 @@ function App() {
               <Route path="/home" element={<HomePage />} />
               <Route path="/success" element={<Success/>} />
               <Route path="/cancel" element={<Cancel/>} />
-              <Route path="/alma" element={<Alma />} />
               <Route path="/" element={<Navigate to="/login" />} />
           </Routes>
       </BrowserRouter>
