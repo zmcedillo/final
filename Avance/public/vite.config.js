@@ -7,4 +7,5 @@ export default defineConfig({
   build: {
     outDir: 'dist', // Render espera los archivos en "dist"
   },
+  base: './',
 })
