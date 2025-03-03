@@ -275,7 +275,7 @@ router.post('/create-checkout-session/:userId', authMiddleware, async (req, res)
 
     // Verificar si el carrito está vacío
     
-    if (cartItems.length === 0) {
+    if (user.cart.length === 0) {
       return res.status(400).json({ message: 'El carrito está vacío' });
     }
 
