@@ -1,0 +1,6 @@
+projectKey=inge
+serverUrl=http://localhost:9000
+serverVersion=26.2.0.119303
+dashboardUrl=http://localhost:9000/dashboard?id=inge
+ceTaskId=be468548-7dce-4273-b2e6-fbfe88ff5192
+ceTaskUrl=http://localhost:9000/api/ce/task?id=be468548-7dce-4273-b2e6-fbfe88ff5192
